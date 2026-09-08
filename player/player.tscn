@@ -1,0 +1,13 @@
+[gd_scene format=3 uid="uid://qhyc6f2m31r1"]
+
+[ext_resource type="Script" uid="uid://8etywg10hnc6" path="res://player/player.gd" id="1_rkbax"]
+[ext_resource type="Texture2D" uid="uid://cy7hxy44jqxh1" path="res://assets/Player/player_01.png" id="2_g1dw6"]
+
+[node name="Player" type="Node2D" unique_id=1503553780]
+script = ExtResource("1_rkbax")
+metadata/_custom_type_script = "uid://dem3jubuh383d"
+
+[node name="Player01" type="Sprite2D" parent="." unique_id=1504361360]
+position = Vector2(3.4062524, -14.125002)
+scale = Vector2(0.48730466, 0.56640637)
+texture = ExtResource("2_g1dw6")
