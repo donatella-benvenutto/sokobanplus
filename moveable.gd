@@ -32,6 +32,8 @@ func move(direction: Vector2i) -> void:
 		moveable.move(direction)
 	slide(direction)
 	
+	Level.add_move_to_turn(self, direction)
+	
 #func slide(direction: Vector2i) -> void:
 #	tile += direction
 #	var target := Vector2(tile) * 128.0 + Vector2(64.0, 64.0)

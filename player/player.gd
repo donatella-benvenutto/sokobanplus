@@ -14,9 +14,11 @@ func _input(event: InputEvent) -> void:
 		"Right":
 			direction = Vector2i.RIGHT
 		"Z":
+			Level.undo_last_move()
 			return
 		_:
 			return
 	# Pasamos true para indicar que la acción proviene del jugador
 	if can_move(direction, true):
+		Level.past_turns.append([])
 		move(direction)
