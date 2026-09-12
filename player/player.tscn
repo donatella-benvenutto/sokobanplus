@@ -4,10 +4,11 @@
 [ext_resource type="Texture2D" uid="uid://cy7hxy44jqxh1" path="res://assets/Player/player_01.png" id="2_g1dw6"]
 
 [node name="Player" type="Node2D" unique_id=1503553780]
+position = Vector2(1, -5)
 script = ExtResource("1_rkbax")
 metadata/_custom_type_script = "uid://dem3jubuh383d"
 
 [node name="Player01" type="Sprite2D" parent="." unique_id=1504361360]
-position = Vector2(3.4062524, -14.125002)
-scale = Vector2(0.48730466, 0.56640637)
+position = Vector2(5.9604645e-08, -5.0000153)
+scale = Vector2(2.0561523, 2.2910156)
 texture = ExtResource("2_g1dw6")
