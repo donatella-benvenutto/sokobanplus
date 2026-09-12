@@ -17,5 +17,6 @@ func _input(event: InputEvent) -> void:
 			return
 		_:
 			return
-	if can_move(direction):
+	# Pasamos true para indicar que la acción proviene del jugador
+	if can_move(direction, true):
 		move(direction)

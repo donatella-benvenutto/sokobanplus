@@ -2,6 +2,7 @@
 
 [ext_resource type="PackedScene" uid="uid://qhyc6f2m31r1" path="res://player/player.tscn" id="1_buf6w"]
 [ext_resource type="Texture2D" uid="uid://d4ff5q5y3v8fi" path="res://sokoban_spritesheet@2.png" id="2_v3udu"]
+[ext_resource type="PackedScene" uid="uid://fc4mw1nhn267" path="res://crate/crate.tscn" id="3_7v72p"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_v3udu"]
 texture = ExtResource("2_v3udu")
@@ -101,6 +102,7 @@ texture_region_size = Vector2i(128, 128)
 [sub_resource type="TileSetScenesCollectionSource" id="TileSetScenesCollectionSource_v3udu"]
 resource_name = "Interactables"
 scenes/1/scene = ExtResource("1_buf6w")
+scenes/2/scene = ExtResource("3_7v72p")
 
 [sub_resource type="TileSet" id="TileSet_l2utv"]
 tile_size = Vector2i(128, 128)
@@ -114,8 +116,8 @@ sources/0 = SubResource("TileSetAtlasSource_v3udu")
 
 [node name="TileMapLayer" type="TileMapLayer" parent="." unique_id=1707055254 groups=["LevelTileMap"]]
 position = Vector2(-1, -2)
-tile_map_data = PackedByteArray("AAABAAEAAAAFAAUAAAABAAQAAAAFAAUAAAACAAEAAAAFAAUAAAACAAQAAAAFAAUAAAADAAAAAAAFAAUAAAADAAEAAAAFAAUAAAADAAQAAAAFAAUAAAAEAAEAAAAFAAUAAAAEAAQAAAAFAAUAAAAFAAEAAAAFAAUAAAAFAAQAAAAFAAUAAAAGAAEAAAAFAAUAAAAGAAIAAAAFAAUAAAAGAAMAAAAFAAUAAAAGAAQAAAAFAAUAAAA=")
+tile_map_data = PackedByteArray("AAAGAAIAAAAFAAUAAAAGAAUAAAAFAAUAAAAFAAIAAAAFAAUAAAAFAAUAAAAFAAUAAAAHAAEAAAAFAAUAAAAHAAIAAAAFAAUAAAAHAAMAAQAAAAAAAgAHAAUAAAAFAAUAAAAHAAYAAQAAAAAAAgAIAAIAAAAFAAUAAAAIAAUAAAAFAAUAAAAJAAIAAAAFAAUAAAAJAAUAAAAFAAUAAAAKAAIAAAAFAAUAAAAKAAMAAAAFAAUAAAAKAAQAAAAFAAUAAAAKAAUAAAAFAAUAAAAKAAYAAQAAAAAAAgA=")
 tile_set = SubResource("TileSet_l2utv")
 
-[node name="Player" parent="TileMapLayer" unique_id=1503553780 groups=["LevelTileMap"] instance=ExtResource("1_buf6w")]
-position = Vector2(299, 385)
+[node name="Player" parent="." unique_id=1503553780 groups=["LevelTileMap"] instance=ExtResource("1_buf6w")]
+position = Vector2(1088, 448)
