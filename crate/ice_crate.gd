@@ -23,9 +23,23 @@
 		#return false
 		#
 	#return true
+
 class_name IceCrate
 extends Moveable
 
+@export var ice_slide_duration: float = 0.25
+
+func slide(direction: Vector2i) -> void:
+	tile += direction
+	var target := Vector2(tile) * 128.0 + Vector2(64.0, 64.0)
+	
+	if tween and tween.is_running():
+		tween.kill()
+		
+	tween = create_tween()
+	tween.tween_property(self, "position", target, ice_slide_duration)\
+		 .set_trans(Tween.TRANS_LINEAR)
+		
 func move(direction: Vector2i) -> void:
 	# Bucle que continúa desplazando la caja de hielo mientras el frente esté libre
 	while true:
