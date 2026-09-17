@@ -35,14 +35,20 @@ func move(direction: Vector2i) -> void:
 	Level.add_move_to_turn(self, direction)
 	
 #func slide(direction: Vector2i) -> void:
-#	tile += direction
-#	var target := Vector2(tile) * 128.0 + Vector2(64.0, 64.0)
-#	tween = create_tween()
-#	tween.tween_property(self, "position", target, 0.08)
+	#position = tile * 128.0 + Vector2(64.0, 64.0)
+	#tile += direction
+	#
+	#var target := tile * 128.0 + Vector2(64.0, 64.0)
+	#tween = create_tween()
+	#tween.tween_property(self, "position", target, 0.08)
 func slide(direction: Vector2i) -> void:
-	position = tile * 128.0 + Vector2(64.0, 64.0)
 	tile += direction
+	var target := Vector2(tile) * 128.0 + Vector2(64.0, 64.0)
 	
-	var target := tile * 128.0 + Vector2(64.0, 64.0)
-	tween = create_tween()
-	tween.tween_property(self, "position", target, 0.08)
+	# Usamos chain() para que si la caja de hielo llama a slide() varias veces,
+	# las animaciones se ejecuten en secuencia fluida.
+	if tween and tween.is_running():
+		tween.chain().tween_property(self, "position", target, 0.08)
+	else:
+		tween = create_tween()
+		tween.tween_property(self, "position", target, 0.08)

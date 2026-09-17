@@ -1,0 +1,11 @@
+[gd_scene format=3 uid="uid://d31nrbqgeavlp"]
+
+[ext_resource type="Texture2D" uid="uid://b8mmmxehxnrs1" path="res://assets/Crates/crate_04.png" id="2_hg5pt"]
+[ext_resource type="Script" uid="uid://2mofdxka7cgl" path="res://crate/ice_crate.gd" id="3_iftk0"]
+
+[node name="Crate" type="Node2D" unique_id=352406681]
+script = ExtResource("3_iftk0")
+metadata/_custom_type_script = "uid://dem3jubuh383d"
+
+[node name="Crate04" type="Sprite2D" parent="." unique_id=690849601]
+texture = ExtResource("2_hg5pt")

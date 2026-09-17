@@ -18,8 +18,11 @@ func level_changed() -> void:
 	past_turns.clear()
 
 func is_tile_wall(tile: Vector2i) -> bool:
-	return tilemap != null and tilemap.get_cell_source_id(tile) == 0
-
+	if tilemap == null:
+		return false
+	# Devuelve true si la celda tiene una pared dibujada
+	return tilemap.get_cell_source_id(tile) == 0
+	
 func get_moveable_at_tile(tile:Vector2i) -> Moveable:
 	for node: Moveable in moveables:
 		if node.tile == tile:
@@ -37,4 +40,9 @@ func undo_last_move() -> void:
 	if !past_turns.is_empty():
 		var last_moves: Array = past_turns.pop_back()
 		for move: Move in last_moves:
+			# Si la caja aún se está moviendo visualmente, frenamos el Tween activo
+			if move.node.tween and move.node.tween.is_running():
+				move.node.tween.kill()
+			
+			# Revertimos la casilla lógicamente y forzamos el slide
 			move.node.slide(-move.direction)
