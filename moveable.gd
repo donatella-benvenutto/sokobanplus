@@ -2,6 +2,7 @@ extends Node2D
 class_name Moveable
 
 var tile := Vector2i.ZERO
+var start_tile := Vector2i.ZERO
 var tween: Tween
 
 func _enter_tree() -> void:
@@ -13,6 +14,7 @@ func _exit_tree() -> void:
 func _ready() -> void:
 	tile = position / 128
 	position = tile * 128.0 + Vector2(64.0, 64.0)
+	start_tile = tile
 	
 func can_move(direction: Vector2i, is_player: bool = false) -> bool:
 	if Level.is_tile_wall(tile + direction):
@@ -26,21 +28,15 @@ func can_move(direction: Vector2i, is_player: bool = false) -> bool:
 		return moveable.can_move(direction, false)
 	return true
 	
-func move(direction: Vector2i) -> void:
+func move(direction: Vector2i) -> bool:
 	var moveable := Level.get_moveable_at_tile(tile + direction)
 	if moveable:
 		moveable.move(direction)
 	slide(direction)
 	
 	Level.add_move_to_turn(self, direction)
-	
-#func slide(direction: Vector2i) -> void:
-	#position = tile * 128.0 + Vector2(64.0, 64.0)
-	#tile += direction
-	#
-	#var target := tile * 128.0 + Vector2(64.0, 64.0)
-	#tween = create_tween()
-	#tween.tween_property(self, "position", target, 0.08)
+	return false # Por defecto, ninguna otra caja explota
+
 func slide(direction: Vector2i) -> void:
 	tile += direction
 	var target := Vector2(tile) * 128.0 + Vector2(64.0, 64.0)

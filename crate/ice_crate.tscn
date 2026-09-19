@@ -4,6 +4,7 @@
 [ext_resource type="Script" uid="uid://2mofdxka7cgl" path="res://crate/ice_crate.gd" id="3_iftk0"]
 
 [node name="Crate" type="Node2D" unique_id=352406681]
+z_index = 1
 script = ExtResource("3_iftk0")
 metadata/_custom_type_script = "uid://dem3jubuh383d"
 

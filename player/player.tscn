@@ -4,6 +4,7 @@
 [ext_resource type="Texture2D" uid="uid://cgsldcjtsb42l" path="res://assets/Player/player_21.png" id="2_rkbax"]
 
 [node name="Player" type="Node2D" unique_id=1503553780]
+z_index = 2
 script = ExtResource("1_rkbax")
 metadata/_custom_type_script = "uid://dem3jubuh383d"
 

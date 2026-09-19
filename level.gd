@@ -46,3 +46,10 @@ func undo_last_move() -> void:
 			
 			# Revertimos la casilla lógicamente y forzamos el slide
 			move.node.slide(-move.direction)
+			
+			# Si el nodo implementa restore_move (como BombCrate), suma el contador
+			if move.node.has_method("restore_move"):
+					move.node.restore_move()
+					
+func clear_history() -> void:
+	past_turns.clear()

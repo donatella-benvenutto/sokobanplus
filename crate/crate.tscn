@@ -8,4 +8,5 @@ script = ExtResource("1_xwnab")
 metadata/_custom_type_script = "uid://dem3jubuh383d"
 
 [node name="Crate02" type="Sprite2D" parent="." unique_id=1269683749]
+z_index = 1
 texture = ExtResource("2_ncwnf")

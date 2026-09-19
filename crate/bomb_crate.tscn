@@ -1,0 +1,20 @@
+[gd_scene format=3 uid="uid://kpps0jmy4ijm"]
+
+[ext_resource type="Script" uid="uid://cum111w2pr2dv" path="res://crate/bomb_crate.gd" id="1_htb1v"]
+[ext_resource type="Texture2D" uid="uid://b3e5e1fub0xmj" path="res://assets/Crates/crate_26.png" id="1_q2ttt"]
+
+[node name="BombCrate" type="Node2D" unique_id=811159913]
+z_index = 1
+script = ExtResource("1_htb1v")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1800564659]
+texture = ExtResource("1_q2ttt")
+
+[node name="CountLabel" type="Label" parent="." unique_id=105715580]
+offset_left = -64.0
+offset_top = -64.0
+offset_right = 64.0
+theme_override_font_sizes/font_size = 50
+text = "5"
+horizontal_alignment = 1
+vertical_alignment = 1

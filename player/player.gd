@@ -3,6 +3,10 @@ extends Moveable
 func _input(event: InputEvent) -> void:
 	if !event.is_pressed():
 		return
+		
+	if is_any_moveable_animating():
+		return
+
 	var direction := Vector2i.ZERO
 	match event.as_text():
 		"Up":
@@ -18,7 +22,22 @@ func _input(event: InputEvent) -> void:
 			return
 		_:
 			return
-	# Pasamos true para indicar que la acción proviene del jugador
+
 	if can_move(direction, true):
+		var target_moveable := Level.get_moveable_at_tile(tile + direction)
+		
 		Level.past_turns.append([])
-		move(direction)
+		
+		var crate_exploded := false
+		if target_moveable:
+			crate_exploded = target_moveable.move(direction)
+		
+		if !crate_exploded:
+			slide(direction)
+			Level.add_move_to_turn(self, direction)
+
+func is_any_moveable_animating() -> bool:
+	for moveable in Level.moveables:
+		if is_instance_valid(moveable) and moveable.tween and moveable.tween.is_running():
+			return true
+	return false
