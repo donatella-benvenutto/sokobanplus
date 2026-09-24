@@ -4,75 +4,127 @@ class_name Moveable
 var tile := Vector2i.ZERO
 var start_tile := Vector2i.ZERO
 var tween: Tween
-var current_slide_dir := Vector2i.ZERO # Dirección actual del deslizamiento
+var active: bool = true
+var inactive_reason: String = ""
 
 func _enter_tree() -> void:
-	Level.moveables.append(self)
-	
-func _exit_tree() -> void:
-	Level.moveables.erase(self)
+	add_to_group("Moveable")
 
 func _ready() -> void:
-	tile = Vector2i(position / 128.0)
-	position = Vector2(tile) * 128.0 + Vector2(64.0, 64.0)
+	tile = Level.world_to_tile(position)
+	position = Level.tile_to_world(tile)
 	start_tile = tile
-	
+
+func is_player_piece() -> bool:
+	return false
+
+func is_metal_crate() -> bool:
+	return false
+
+func is_animating() -> bool:
+	return tween != null and tween.is_running()
+
 func can_move(direction: Vector2i, is_player: bool = false) -> bool:
-	if Level.is_tile_wall(tile + direction):
+	if not active:
 		return false
-	var moveable := Level.get_moveable_at_tile(tile + direction)
+
+	var target_tile := tile + direction
+	if not Level.can_moveable_enter_tile(self, target_tile):
+		return false
+
+	var moveable := Level.get_moveable_at_tile(target_tile)
 	if moveable:
-		if !is_player:
+		# Una caja no puede empujar otra caja. El jugador sí puede intentar empujar una.
+		if not is_player:
 			return false
 		return moveable.can_move(direction, false)
+
 	return true
-	
+
 func move(direction: Vector2i) -> bool:
-	var start_pos := tile
+	if not active:
+		return false
+
 	var moveable := Level.get_moveable_at_tile(tile + direction)
 	if moveable:
 		moveable.move(direction)
-		
+
 	slide(direction)
-	Level.add_move_to_turn(self, start_pos)
 	return false
 
 func slide(direction: Vector2i) -> void:
-	current_slide_dir = direction
 	tile += direction
-	var target := Vector2(tile) * 128.0 + Vector2(64.0, 64.0)
-	
+	var target := Level.tile_to_world(tile)
+
 	if tween and tween.is_running():
 		tween.kill()
-		
+
 	tween = create_tween()
 	tween.tween_property(self, "position", target, 0.08)
-	tween.tween_callback(check_hole_teleport)
+	Level.on_moveable_entered_tile(self)
 
-func check_hole_teleport() -> void:
-	var hole := Level.get_hole_at_tile(tile)
-	
-	if hole and hole.paired_hole:
-		var destination_tile := hole.paired_hole.tile
-		
-		# Solo teletransporta si el portal de destino no está ocupado
-		if Level.get_moveable_at_tile(destination_tile) == null:
-			teleport_to(destination_tile)
+func move_on_conveyor(direction: Vector2i) -> bool:
+	return move(direction)
 
-func teleport_to(new_tile: Vector2i) -> void:
-	tile = new_tile
-	var destination_pos := Vector2(tile) * 128.0 + Vector2(64.0, 64.0)
-	
+func teleport_to_tile(destination: Vector2i) -> void:
+	# Cancelamos el movimiento hacia la entrada para que no arrastre la caja
+	# de vuelta después del transporte. start_tile y el estado se conservan.
 	if tween and tween.is_running():
 		tween.kill()
-		
-	tween = create_tween()
-	tween.tween_property(self, "scale", Vector2.ZERO, 0.08)
-	tween.tween_callback(func(): position = destination_pos)
-	tween.tween_property(self, "scale", Vector2.ONE, 0.08)
-	
-	# Al finalizar el teletransporte, notificar el evento
-	tween.tween_callback(on_teleport_complete)
+	tile = destination
+	position = Level.tile_to_world(destination)
 
-func on_teleport_complete() -> void:
-	pass # Sobrescribible por subclases si lo requieren (ej. hielo)
+func deactivate(reason: String) -> void:
+	active = false
+	inactive_reason = reason
+	visible = false
+
+func reset_to_start() -> void:
+	# Una caja retirada por la puerta no puede revivir por un efecto pendiente.
+	# Z restaura el snapshot directamente; R vuelve a crear la escena.
+	if not active:
+		return
+	if tween and tween.is_running():
+		tween.kill()
+	tile = start_tile
+	position = Level.tile_to_world(start_tile)
+	active = true
+	inactive_reason = ""
+	visible = true
+	modulate = Color.WHITE
+	scale = Vector2.ONE
+	_on_reset_to_start()
+	Level.evaluate_pressure_plates()
+
+func _on_reset_to_start() -> void:
+	pass
+
+func capture_state() -> Dictionary:
+	return {
+		"tile": tile,
+		"active": active,
+		"inactive_reason": inactive_reason,
+		"visible": visible,
+		"scale": scale,
+		"modulate": modulate,
+		"extra": capture_extra_state()
+	}
+
+func capture_extra_state() -> Dictionary:
+	return {}
+
+func restore_state(state: Dictionary) -> void:
+	if tween and tween.is_running():
+		tween.kill()
+
+	tile = state["tile"]
+	position = Level.tile_to_world(tile)
+	active = state["active"]
+	inactive_reason = state["inactive_reason"]
+	visible = state["visible"]
+	scale = state["scale"]
+	modulate = state["modulate"]
+	restore_extra_state(state.get("extra", {}))
+
+func restore_extra_state(_state: Dictionary) -> void:
+	pass
