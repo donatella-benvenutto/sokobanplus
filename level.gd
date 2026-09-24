@@ -7,7 +7,8 @@ class Move:
 var tilemap: TileMapLayer
 var moveables: Array[Moveable]
 
-var past_turns: Array[Array]
+var holes: Array[Hole] = []
+var past_turns: Array[Array] = []
 
 func _ready() -> void:
 	get_tree().scene_changed.connect(level_changed)
@@ -29,27 +30,37 @@ func get_moveable_at_tile(tile:Vector2i) -> Moveable:
 			return node
 	return null
 
-func add_move_to_turn(node: Moveable, direction: Vector2i) -> void:
-	var move := Move.new()
-	move.node = node
-	move.direction = direction
-	past_turns.back().append(move)
+# Registrar el estado previo completo de un objeto en el turno actual
+func add_move_to_turn(moveable: Moveable, previous_tile: Vector2i) -> void:
+	if past_turns.is_empty():
+		past_turns.append([])
+	past_turns[-1].append({"object": moveable, "from_tile": previous_tile})
 	
 	
 func undo_last_move() -> void:
-	if !past_turns.is_empty():
-		var last_moves: Array = past_turns.pop_back()
-		for move: Move in last_moves:
-			# Si la caja aún se está moviendo visualmente, frenamos el Tween activo
-			if move.node.tween and move.node.tween.is_running():
-				move.node.tween.kill()
+	if past_turns.is_empty():
+		return
+		
+	var last_turn: Array = past_turns.pop_back()
+	
+	# Revertir las posiciones exactas registradas en el turno
+	for entry in last_turn:
+		var moveable: Moveable = entry["object"]
+		var from_tile: Vector2i = entry["from_tile"]
+		
+		if is_instance_valid(moveable):
+			moveable.tile = from_tile
+			moveable.position = Vector2(from_tile) * 128.0 + Vector2(64.0, 64.0)
 			
-			# Revertimos la casilla lógicamente y forzamos el slide
-			move.node.slide(-move.direction)
-			
-			# Si el nodo implementa restore_move (como BombCrate), suma el contador
-			if move.node.has_method("restore_move"):
-					move.node.restore_move()
+			# Si es una caja bomba, restaurar su contador si aplica
+			if moveable.has_method("restore_move"):
+				moveable.restore_move()
 					
 func clear_history() -> void:
 	past_turns.clear()
+	
+func get_hole_at_tile(target_tile: Vector2i) -> Hole:
+	for hole in holes:
+		if hole.tile == target_tile:
+			return hole
+	return null

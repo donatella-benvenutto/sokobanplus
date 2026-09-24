@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://dkntn5thmv65o"]
+
+[ext_resource type="Script" uid="uid://cwrjdp1h6bcns" path="res://hole/hole.gd" id="1_unfpl"]
+
+[node name="Hole" type="Node2D" unique_id=2019936244]
+script = ExtResource("1_unfpl")

@@ -26,6 +26,7 @@ func _input(event: InputEvent) -> void:
 	if can_move(direction, true):
 		var target_moveable := Level.get_moveable_at_tile(tile + direction)
 		
+		# Crear un nuevo grupo de movimientos para este turno
 		Level.past_turns.append([])
 		
 		var crate_exploded := false
@@ -33,8 +34,9 @@ func _input(event: InputEvent) -> void:
 			crate_exploded = target_moveable.move(direction)
 		
 		if !crate_exploded:
+			var player_start_tile := tile
 			slide(direction)
-			Level.add_move_to_turn(self, direction)
+			Level.add_move_to_turn(self, player_start_tile)
 
 func is_any_moveable_animating() -> bool:
 	for moveable in Level.moveables:

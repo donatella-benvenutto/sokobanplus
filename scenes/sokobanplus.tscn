@@ -5,6 +5,7 @@
 [ext_resource type="PackedScene" uid="uid://fc4mw1nhn267" path="res://crate/crate.tscn" id="3_7v72p"]
 [ext_resource type="PackedScene" uid="uid://d31nrbqgeavlp" path="res://crate/ice_crate.tscn" id="4_3efyp"]
 [ext_resource type="PackedScene" uid="uid://kpps0jmy4ijm" path="res://crate/bomb_crate.tscn" id="5_4m8hk"]
+[ext_resource type="PackedScene" uid="uid://dkntn5thmv65o" path="res://hole/hole.tscn" id="6_1b4r1"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_v3udu"]
 texture = ExtResource("2_v3udu")
@@ -125,3 +126,10 @@ tile_set = SubResource("TileSet_l2utv")
 
 [node name="Player" parent="." unique_id=1503553780 groups=["LevelTileMap"] instance=ExtResource("1_buf6w")]
 position = Vector2(1088, 448)
+
+[node name="Hole" parent="." unique_id=2019936244 node_paths=PackedStringArray("paired_hole") instance=ExtResource("6_1b4r1")]
+position = Vector2(384, 832)
+paired_hole = NodePath("../Hole2")
+
+[node name="Hole2" parent="." unique_id=1675156856 instance=ExtResource("6_1b4r1")]
+position = Vector2(1600, 192)

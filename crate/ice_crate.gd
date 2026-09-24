@@ -1,9 +1,8 @@
 class_name IceCrate
 extends Moveable
 
-@export var ice_slide_duration: float = 0.25
-
 func slide(direction: Vector2i) -> void:
+	current_slide_dir = direction
 	tile += direction
 	var target := Vector2(tile) * 128.0 + Vector2(64.0, 64.0)
 	
@@ -11,19 +10,22 @@ func slide(direction: Vector2i) -> void:
 		tween.kill()
 		
 	tween = create_tween()
-	tween.tween_property(self, "position", target, ice_slide_duration)\
-		 .set_trans(Tween.TRANS_LINEAR)
-		
-func move(direction: Vector2i) -> bool:
-	# Bucle que continúa desplazando la caja de hielo mientras el frente esté libre
-	while true:
-		var next_tile := tile + direction
-		
-		# Se detiene si la siguiente casilla es una pared o si hay otra caja/jugador
-		if Level.is_tile_wall(next_tile) or Level.get_moveable_at_tile(next_tile) != null:
-			break
+	tween.tween_property(self, "position", target, 0.08)
+	tween.tween_callback(on_step_finished)
+
+func on_step_finished() -> void:
+	var hole := Level.get_hole_at_tile(tile)
+	if hole and hole.paired_hole:
+		var dest := hole.paired_hole.tile
+		if Level.get_moveable_at_tile(dest) == null:
+			teleport_to(dest)
+			return
 			
-		slide(direction)
-		Level.add_move_to_turn(self, direction)
-		
-	return false
+	continue_sliding_if_possible()
+
+func on_teleport_complete() -> void:
+	continue_sliding_if_possible()
+
+func continue_sliding_if_possible() -> void:
+	if can_move(current_slide_dir, false):
+		slide(current_slide_dir)
