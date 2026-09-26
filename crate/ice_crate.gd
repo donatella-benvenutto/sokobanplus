@@ -2,6 +2,7 @@ class_name IceCrate
 extends Moveable
 
 func slide(direction: Vector2i) -> void:
+	is_teleporting = false
 	current_slide_dir = direction
 	tile += direction
 	var target := Vector2(tile) * 128.0 + Vector2(64.0, 64.0)
@@ -14,6 +15,9 @@ func slide(direction: Vector2i) -> void:
 	tween.tween_callback(on_step_finished)
 
 func on_step_finished() -> void:
+	if is_teleporting:
+		return
+		
 	var hole := Level.get_hole_at_tile(tile)
 	if hole and hole.paired_hole:
 		var dest := hole.paired_hole.tile
@@ -29,3 +33,6 @@ func on_teleport_complete() -> void:
 func continue_sliding_if_possible() -> void:
 	if can_move(current_slide_dir, false):
 		slide(current_slide_dir)
+	else:
+		# Al detenerse contra una pared u otro bloque, se permite ser teletransportado nuevamente
+		is_teleporting = false

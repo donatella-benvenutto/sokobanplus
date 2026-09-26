@@ -17,6 +17,7 @@ func _ready() -> void:
 func level_changed() -> void:
 	tilemap = get_tree().get_first_node_in_group("LevelTileMap")
 	past_turns.clear()
+	holes.clear() # Limpiar referencias viejas
 
 func is_tile_wall(tile: Vector2i) -> bool:
 	if tilemap == null:

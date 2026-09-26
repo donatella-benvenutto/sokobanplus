@@ -4,7 +4,8 @@ class_name Moveable
 var tile := Vector2i.ZERO
 var start_tile := Vector2i.ZERO
 var tween: Tween
-var current_slide_dir := Vector2i.ZERO # Dirección actual del deslizamiento
+var current_slide_dir := Vector2i.ZERO
+var is_teleporting: bool = false # Bandera para evitar bucles de TP
 
 func _enter_tree() -> void:
 	Level.moveables.append(self)
@@ -38,6 +39,8 @@ func move(direction: Vector2i) -> bool:
 	return false
 
 func slide(direction: Vector2i) -> void:
+	var old_tile := tile
+	is_teleporting = false
 	current_slide_dir = direction
 	tile += direction
 	var target := Vector2(tile) * 128.0 + Vector2(64.0, 64.0)
@@ -47,19 +50,31 @@ func slide(direction: Vector2i) -> void:
 		
 	tween = create_tween()
 	tween.tween_property(self, "position", target, 0.08)
-	tween.tween_callback(check_hole_teleport)
+	
+	# Al terminar de moverse visualmente a la casilla:
+	tween.tween_callback(func():
+		# 1. Notificar al agujero que dejó libre por si había algo esperando
+		var prev_hole := Level.get_hole_at_tile(old_tile)
+		if prev_hole:
+			prev_hole.notify_freed()
+			
+		# 2. Revisar si la casilla a la que llegó es un agujero
+		check_hole_teleport()
+	)
 
 func check_hole_teleport() -> void:
+	if is_teleporting:
+		return
+		
 	var hole := Level.get_hole_at_tile(tile)
-	
 	if hole and hole.paired_hole:
 		var destination_tile := hole.paired_hole.tile
-		
-		# Solo teletransporta si el portal de destino no está ocupado
 		if Level.get_moveable_at_tile(destination_tile) == null:
 			teleport_to(destination_tile)
 
 func teleport_to(new_tile: Vector2i) -> void:
+	is_teleporting = true
+	var old_tile := tile
 	tile = new_tile
 	var destination_pos := Vector2(tile) * 128.0 + Vector2(64.0, 64.0)
 	
@@ -68,11 +83,15 @@ func teleport_to(new_tile: Vector2i) -> void:
 		
 	tween = create_tween()
 	tween.tween_property(self, "scale", Vector2.ZERO, 0.08)
-	tween.tween_callback(func(): position = destination_pos)
+	tween.tween_callback(func():
+		position = destination_pos
+		# Al salir del agujero de origen, avisa si había otro esperando atrás
+		var prev_hole := Level.get_hole_at_tile(old_tile)
+		if prev_hole:
+			prev_hole.notify_freed()
+	)
 	tween.tween_property(self, "scale", Vector2.ONE, 0.08)
-	
-	# Al finalizar el teletransporte, notificar el evento
 	tween.tween_callback(on_teleport_complete)
 
 func on_teleport_complete() -> void:
-	pass # Sobrescribible por subclases si lo requieren (ej. hielo)
+	pass

@@ -131,5 +131,6 @@ position = Vector2(1088, 448)
 position = Vector2(384, 832)
 paired_hole = NodePath("../Hole2")
 
-[node name="Hole2" parent="." unique_id=1675156856 instance=ExtResource("6_1b4r1")]
-position = Vector2(1600, 192)
+[node name="Hole2" parent="." unique_id=1675156856 node_paths=PackedStringArray("paired_hole") instance=ExtResource("6_1b4r1")]
+position = Vector2(1600, 320)
+paired_hole = NodePath("../Hole")
