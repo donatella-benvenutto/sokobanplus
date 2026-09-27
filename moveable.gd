@@ -49,7 +49,7 @@ func slide(direction: Vector2i) -> void:
 		tween.kill()
 		
 	tween = create_tween()
-	tween.tween_property(self, "position", target, 0.08)
+	tween.tween_property(self, "position", target, 0.18)
 	
 	# Al terminar de moverse visualmente a la casilla:
 	tween.tween_callback(func():
