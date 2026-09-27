@@ -53,12 +53,24 @@ func slide(direction: Vector2i) -> void:
 	
 	# Al terminar de moverse visualmente a la casilla:
 	tween.tween_callback(func():
-		# 1. Notificar al agujero que dejó libre por si había algo esperando
+		# 1. Notificar al agujero que dejó libre
 		var prev_hole := Level.get_hole_at_tile(old_tile)
 		if prev_hole:
 			prev_hole.notify_freed()
 			
-		# 2. Revisar si la casilla a la que llegó es un agujero
+		# 2. Revisar si la casilla actual es un piso de redirección
+		var redirect: Variant = Level.get_redirect_at_tile(tile)
+		if redirect:
+			current_slide_dir = redirect.direction
+			# Si el camino está despejado o si puede empujar, continuar deslizamiento
+			if can_move(current_slide_dir, true):
+				var target_moveable := Level.get_moveable_at_tile(tile + current_slide_dir)
+				if target_moveable:
+					target_moveable.move(current_slide_dir)
+				slide(current_slide_dir)
+				return
+
+		# 3. Revisar si la casilla a la que llegó es un agujero
 		check_hole_teleport()
 	)
 

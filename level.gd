@@ -9,6 +9,7 @@ var moveables: Array[Moveable]
 
 var holes: Array[Hole] = []
 var fires: Array[Fire] = []
+var redirect_tiles: Array[Node2D] = []
 var past_turns: Array[Array] = []
 
 func _ready() -> void:
@@ -20,6 +21,14 @@ func level_changed() -> void:
 	past_turns.clear()
 	holes.clear()
 	fires.clear()
+	redirect_tiles.clear()
+	
+	# Buscar e integrar baldosas de redirección que ya existan en el nivel cargado
+	get_tree().create_timer(0.01).timeout.connect(func():
+		for node in get_tree().get_nodes_in_group("RedirectTiles"):
+			if node is RedirectTile and not redirect_tiles.has(node):
+				redirect_tiles.append(node)
+	)
 
 func is_tile_wall(tile: Vector2i) -> bool:
 	if tilemap == null:
@@ -98,3 +107,9 @@ func clear_spawn_for_player(spawn_tile: Vector2i) -> void:
 				player.tile = target_tile
 				player.position = Vector2(target_tile) * 128.0 + Vector2(64.0, 64.0)
 				break
+				
+func get_redirect_at_tile(target_tile: Vector2i) -> Node2D:
+	for rt in redirect_tiles:
+		if rt.tile == target_tile:
+			return rt
+	return null

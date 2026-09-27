@@ -21,16 +21,32 @@ func move(direction: Vector2i) -> bool:
 	moves_left -= 1
 	update_label()
 	
-	# 3. Si llega a 0, espera a que termine de deslizarse y luego explota
+	# 3. Si llega a 0, programar la verificación al terminar las animaciones/desplazamientos
 	if moves_left <= 0:
 		if tween and tween.is_running():
-			# Espera a que la caja termine de moverse físicamente a la nueva casilla
-			tween.finished.connect(explode, CONNECT_ONE_SHOT)
+			tween.finished.connect(check_explosion_after_move, CONNECT_ONE_SHOT)
 		else:
-			explode()
-		return false # Devuelve false para que el jugador SÍ camine a la casilla que la caja dejó libre
-		
+			check_explosion_after_move()
+			
 	return false
+
+func check_explosion_after_move() -> void:
+	# Si está entrando a un agujero o teletransportándose, no explota todavía
+	if is_teleporting:
+		return
+		
+	# Si llegó a un agujero en este paso, la teletransportación apenas va a iniciar
+	var hole := Level.get_hole_at_tile(tile)
+	if hole and hole.paired_hole:
+		return
+		
+	explode()
+
+func on_teleport_complete() -> void:
+	super.on_teleport_complete()
+	# Al terminar la animación de reaparición en el agujero de salida, si la bomba llegó a 0 explota ahí
+	if moves_left <= 0:
+		explode()
 
 func restore_move() -> void:
 	moves_left += 1
@@ -57,19 +73,16 @@ func explode() -> void:
 				affected_crates.append(moveable)
 
 	# 3. REACCIÓN EN CADENA POR CONFLICTO DE ORIGEN (SPAWN)
-	# Si la casilla start_tile de alguna caja a resetear está ocupada por otra caja,
-	# esa otra caja debe resetearse también para liberar el espacio.
 	var checking := true
 	while checking:
 		checking = false
 		for crate in affected_crates:
 			var occupant := Level.get_moveable_at_tile(crate.start_tile)
-			# Si la casilla inicial está ocupada por otra caja que NO estaba en el grupo de reseteo:
 			if occupant and occupant != crate and not affected_crates.has(occupant):
 				var is_player: bool = occupant.get_script() != null and occupant.get_script().resource_path.ends_with("player.gd")
 				if not is_player:
 					affected_crates.append(occupant)
-					checking = true # Repetir verificación para ver si esta nueva caja libera u ocupa otra
+					checking = true
 
 	# 4. Animar y resetear las posiciones de todas las cajas en la cadena
 	for crate in affected_crates:
@@ -81,7 +94,7 @@ func animate_reset_crate(crate: Moveable) -> void:
 		
 	crate.tween = create_tween()
 	
-	# Efecto visual de parpadeo rojo por explosión/reacción en cadena
+	# Efecto visual de parpadeo rojo por explosión
 	for i in range(3):
 		crate.tween.tween_property(crate, "modulate", Color(3.0, 0.2, 0.2, 0.2), 0.08)
 		crate.tween.tween_property(crate, "modulate", Color.WHITE, 0.08)

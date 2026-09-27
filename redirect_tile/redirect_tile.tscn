@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://cu00ddqwft3x"]
+
+[ext_resource type="Script" uid="uid://csnyh62lpnutu" path="res://redirect_tile/redirect_tile.gd" id="1_ygat3"]
+
+[node name="RedirectTile" type="Node2D" unique_id=263685681]
+script = ExtResource("1_ygat3")

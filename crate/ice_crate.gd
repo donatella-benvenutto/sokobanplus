@@ -21,7 +21,21 @@ func on_step_finished() -> void:
 		melt_and_reset()
 		return
 
-	# 2. Verificar si la casilla actual es un AGUJERO
+	# 2. Verificar PISO DE REDIRECCIÓN
+	var redirect: Variant = Level.get_redirect_at_tile(tile)
+	if redirect:
+		current_slide_dir = redirect.direction
+		# Si al reorientarse choca directamente contra un obstáculo rígido
+		if not can_move(current_slide_dir, false):
+			# Si choca contra el jugador, empujar al jugador
+			var target_moveable := Level.get_moveable_at_tile(tile + current_slide_dir)
+			if target_moveable and target_moveable.get_script() != null and target_moveable.get_script().resource_path.ends_with("player.gd"):
+				if target_moveable.can_move(current_slide_dir, true):
+					target_moveable.slide(current_slide_dir)
+					slide(current_slide_dir)
+					return
+
+	# 3. Verificar si la casilla actual es un AGUJERO
 	if not is_teleporting:
 		var hole := Level.get_hole_at_tile(tile)
 		if hole and hole.paired_hole:
@@ -38,10 +52,8 @@ func melt_and_reset() -> void:
 		
 	tween = create_tween()
 	
-	# 1. Animación de derretido (se aplasta y se desvanece como charco de agua)
-	# Cambia a tono rojizo/caliente
+	# 1. Animación de derretido (se aplasta y desvanece como charco de agua)
 	tween.tween_property(self, "modulate", Color(1.0, 0.4, 0.2, 0.0), 0.25)
-	# Se aplasta verticalmente (Y=0) y se ensancha un poco horizontalmente (X=1.3)
 	tween.parallel().tween_property(self, "scale", Vector2(1.3, 0.0), 0.25)
 	
 	# 2. Resetear posición cuando termina de derretirse
@@ -51,7 +63,6 @@ func melt_and_reset() -> void:
 		
 		tile = start_tile
 		position = Vector2(start_tile) * 128.0 + Vector2(64.0, 64.0)
-		# Devolver a la escala inicial (0) para que aparezca desde abajo
 		scale = Vector2.ZERO
 		modulate = Color.WHITE
 	)
@@ -67,4 +78,3 @@ func continue_sliding_if_possible() -> void:
 		slide(current_slide_dir)
 	else:
 		is_teleporting = false
-		
