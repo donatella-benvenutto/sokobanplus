@@ -88,6 +88,7 @@ func animate_reset_crate(crate: Moveable) -> void:
 	
 	crate.tween.tween_callback(func():
 		crate.is_teleporting = false
+		Level.clear_spawn_for_player(crate.start_tile)
 		crate.tile = crate.start_tile
 		var start_pos := Vector2(crate.start_tile) * 128.0 + Vector2(64.0, 64.0)
 		crate.position = start_pos

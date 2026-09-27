@@ -8,6 +8,7 @@ var tilemap: TileMapLayer
 var moveables: Array[Moveable]
 
 var holes: Array[Hole] = []
+var fires: Array[Fire] = []
 var past_turns: Array[Array] = []
 
 func _ready() -> void:
@@ -17,7 +18,8 @@ func _ready() -> void:
 func level_changed() -> void:
 	tilemap = get_tree().get_first_node_in_group("LevelTileMap")
 	past_turns.clear()
-	holes.clear() # Limpiar referencias viejas
+	holes.clear()
+	fires.clear()
 
 func is_tile_wall(tile: Vector2i) -> bool:
 	if tilemap == null:
@@ -65,3 +67,34 @@ func get_hole_at_tile(target_tile: Vector2i) -> Hole:
 		if hole.tile == target_tile:
 			return hole
 	return null
+	
+func get_fire_at_tile(target_tile: Vector2i) -> Fire:
+	for fire in fires:
+		if fire.tile == target_tile:
+			return fire
+	return null
+	
+func is_tile_empty(check_tile: Vector2i) -> bool:
+	if is_tile_wall(check_tile):
+		return false
+	if get_moveable_at_tile(check_tile) != null:
+		return false
+	return true
+
+func clear_spawn_for_player(spawn_tile: Vector2i) -> void:
+	# Buscar el nodo del jugador entre los moveables
+	var player: Moveable = null
+	for m in moveables:
+		if m.get_script() != null and m.get_script().resource_path.ends_with("player.gd"):
+			player = m
+			break
+
+	# Si el jugador está justo en la casilla donde va a reaparecer la caja:
+	if player and player.tile == spawn_tile:
+		var directions = [Vector2i.UP, Vector2i.DOWN, Vector2i.LEFT, Vector2i.RIGHT]
+		for dir in directions:
+			var target_tile = spawn_tile + dir
+			if is_tile_empty(target_tile):
+				player.tile = target_tile
+				player.position = Vector2(target_tile) * 128.0 + Vector2(64.0, 64.0)
+				break

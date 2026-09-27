@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://d31nrbqgeavlp" path="res://crate/ice_crate.tscn" id="4_3efyp"]
 [ext_resource type="PackedScene" uid="uid://kpps0jmy4ijm" path="res://crate/bomb_crate.tscn" id="5_4m8hk"]
 [ext_resource type="PackedScene" uid="uid://dkntn5thmv65o" path="res://hole/hole.tscn" id="6_1b4r1"]
+[ext_resource type="PackedScene" uid="uid://c5xcxu5xn2ub0" path="res://fire/fire.tscn" id="7_c5wel"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_v3udu"]
 texture = ExtResource("2_v3udu")
@@ -134,3 +135,6 @@ paired_hole = NodePath("../Hole2")
 [node name="Hole2" parent="." unique_id=1675156856 node_paths=PackedStringArray("paired_hole") instance=ExtResource("6_1b4r1")]
 position = Vector2(1600, 320)
 paired_hole = NodePath("../Hole")
+
+[node name="Fire" parent="." unique_id=660712305 instance=ExtResource("7_c5wel")]
+position = Vector2(256, 576)

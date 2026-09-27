@@ -1,0 +1,51 @@
+[gd_scene format=3 uid="uid://c5xcxu5xn2ub0"]
+
+[ext_resource type="Script" uid="uid://wmutg5a1p22k" path="res://fire/fire.gd" id="1_uyrjx"]
+[ext_resource type="Texture2D" uid="uid://dxbe7fbwdxu60" path="res://fire/Pixel Fire Asset Pack Colored/fire asset red/Group 4 - 1/Group 4 - 1_1.png" id="2_qk304"]
+[ext_resource type="Texture2D" uid="uid://bk57el60nwq2a" path="res://fire/Pixel Fire Asset Pack Colored/fire asset red/Group 4 - 1/Group 4 - 1_2.png" id="3_laks6"]
+[ext_resource type="Texture2D" uid="uid://ch7lagniu2fs5" path="res://fire/Pixel Fire Asset Pack Colored/fire asset red/Group 4 - 1/Group 4 - 1_3.png" id="4_s63vj"]
+[ext_resource type="Texture2D" uid="uid://ywv0nvquekeo" path="res://fire/Pixel Fire Asset Pack Colored/fire asset red/Group 4 - 1/Group 4 - 1_4.png" id="5_et855"]
+[ext_resource type="Texture2D" uid="uid://bq23rc4cxvxbl" path="res://fire/Pixel Fire Asset Pack Colored/fire asset red/Group 4 - 1/Group 4 - 1_5.png" id="6_8d8wq"]
+[ext_resource type="Texture2D" uid="uid://ddcokxxw7ockp" path="res://fire/Pixel Fire Asset Pack Colored/fire asset red/Group 4 - 1/Group 4 - 1_6.png" id="7_nr6b4"]
+[ext_resource type="Texture2D" uid="uid://34gohmpdaqt5" path="res://fire/Pixel Fire Asset Pack Colored/fire asset red/Group 4 - 1/Group 4 - 1_7.png" id="8_m63wf"]
+[ext_resource type="Texture2D" uid="uid://djkwtmd0pmhd0" path="res://fire/Pixel Fire Asset Pack Colored/fire asset red/Group 4 - 1/Group 4 - 1_8.png" id="9_h11xh"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_npj0k"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_qk304")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_laks6")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_s63vj")
+}, {
+"duration": 1.0,
+"texture": ExtResource("5_et855")
+}, {
+"duration": 1.0,
+"texture": ExtResource("6_8d8wq")
+}, {
+"duration": 1.0,
+"texture": ExtResource("7_nr6b4")
+}, {
+"duration": 1.0,
+"texture": ExtResource("8_m63wf")
+}, {
+"duration": 1.0,
+"texture": ExtResource("9_h11xh")
+}],
+"loop": 1,
+"name": &"default",
+"speed": 12.0
+}]
+
+[node name="Fire" type="Node2D" unique_id=660712305]
+script = ExtResource("1_uyrjx")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=377612234]
+scale = Vector2(3, 3)
+sprite_frames = SubResource("SpriteFrames_npj0k")
+autoplay = "default"
