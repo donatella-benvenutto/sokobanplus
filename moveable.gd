@@ -19,6 +19,8 @@ func _ready() -> void:
 	start_tile = tile
 	
 func can_move(direction: Vector2i, is_player: bool = false) -> bool:
+	if Level.is_blocked_for(self, tile + direction):
+		return false
 	if Level.is_tile_wall(tile + direction):
 		return false
 	var moveable := Level.get_moveable_at_tile(tile + direction)

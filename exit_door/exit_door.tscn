@@ -1,0 +1,10 @@
+[gd_scene format=3 uid="uid://dh04hi2unpu4k"]
+
+[ext_resource type="Script" uid="uid://bp3fo2pk4akx1" path="res://exit_door/exit_door.gd" id="1_tqxgo"]
+[ext_resource type="Texture2D" uid="uid://bxmgql5o1rend" path="res://assets/Ground/ground_04.png" id="2_y5ia2"]
+
+[node name="ExitDoor" type="Node2D" unique_id=1166918138]
+script = ExtResource("1_tqxgo")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1454467623]
+texture = ExtResource("2_y5ia2")
