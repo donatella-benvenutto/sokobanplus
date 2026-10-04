@@ -2,12 +2,10 @@ class_name PressureButton
 extends Node2D
 ## Botón en el piso. Está presionado mientras haya una caja/piedra quieta encima.
 ## Las paredes (GateBlock) con el mismo "channel" bajan cuando se presiona.
-## La imagen la pone el nodo hijo Sprite2D (se elige en el Inspector).
 
 @export var channel: int = 0               # Botones y paredes con el mismo número están conectados
 @export var player_can_press: bool = false # Si es true, el jugador también lo presiona al pararse
-## Opcional: imagen para cuando está presionado.
-## Si la dejás vacía, el botón se oscurece y se achica un poco.
+
 @export var pressed_texture: Texture2D
 
 @onready var sprite: Sprite2D = $Sprite2D

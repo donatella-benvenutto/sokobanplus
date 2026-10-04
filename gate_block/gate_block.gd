@@ -2,7 +2,6 @@ class_name GateBlock
 extends Node2D
 ## Bloque de pared que baja cuando TODOS los botones de su mismo channel están presionados.
 ## Si "inverted" es true hace lo contrario: está abajo y SUBE cuando se presionan.
-## La imagen la pone el nodo hijo Sprite2D (se elige en el Inspector).
 
 @export var channel: int = 0
 @export var inverted: bool = false
