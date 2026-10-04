@@ -12,6 +12,15 @@ var fires: Array[Fire] = []
 var redirect_tiles: Array[Node2D] = []
 var past_turns: Array[Array] = []
 
+signal level_completed
+
+# Casilla "fuera del mapa" donde mandamos las cajas que ya salieron
+const OUT_TILE := Vector2i(-1000, -1000)
+
+# Colores para conectar botones con paredes (channel 0, 1, 2, 3)
+const CHANNEL_COLORS = [Color.GOLD, Color.DODGER_BLUE, Color.MEDIUM_ORCHID, Color.SPRING_GREEN]
+
+
 func _ready() -> void:
 	get_tree().scene_changed.connect(level_changed)
 	level_changed()
@@ -113,3 +122,59 @@ func get_redirect_at_tile(target_tile: Vector2i) -> Node2D:
 		if rt.tile == target_tile:
 			return rt
 	return null
+
+
+func channel_color(channel: int) -> Color:
+	return CHANNEL_COLORS[posmod(channel, CHANNEL_COLORS.size())]
+
+func get_door_at_tile(t: Vector2i) -> ExitDoor:
+	for door in get_tree().get_nodes_in_group("exit_doors"):
+		if door.tile == t:
+			return door
+	return null
+
+func get_gate_at_tile(t: Vector2i) -> GateBlock:
+	for gate in get_tree().get_nodes_in_group("gates"):
+		if gate.tile == t:
+			return gate
+	return null
+
+# ¿Esta cosa es una caja que hay que sacar por la puerta?
+func is_exit_crate(m: Node) -> bool:
+	return not (m is Player) and not (m is Stone)
+
+# ¿Hay algo nuevo (pared cerrada o puerta) que impida a "mover" entrar a la casilla t?
+func is_blocked_for(mover: Node, t: Vector2i) -> bool:
+	var gate := get_gate_at_tile(t)
+	if gate and gate.is_closed():
+		return true
+	var door := get_door_at_tile(t)
+	if door and not is_exit_crate(mover):
+		return true
+	return false
+
+func count_crates_remaining() -> int:
+	var count := 0
+	for m in moveables:
+		if is_instance_valid(m) and is_exit_crate(m) and m.tile != OUT_TILE:
+			count += 1
+	return count
+
+func check_level_complete() -> void:
+	if count_crates_remaining() > 0:
+		return
+	level_completed.emit()
+	show_message("¡Nivel completado!")
+
+func show_message(text: String) -> void:
+	var layer := CanvasLayer.new()
+	var label := Label.new()
+	label.text = text
+	label.add_theme_font_size_override("font_size", 72)
+	label.add_theme_color_override("font_outline_color", Color.BLACK)
+	label.add_theme_constant_override("outline_size", 14)
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	label.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	layer.add_child(label)
+	get_tree().current_scene.add_child(layer)

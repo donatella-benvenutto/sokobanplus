@@ -1,0 +1,11 @@
+[gd_scene format=3 uid="uid://jsyfeytiu6dx"]
+
+[ext_resource type="Script" uid="uid://bahi5vtolr3ow" path="res://gate_block/gate_block.gd" id="1_gev7e"]
+[ext_resource type="Texture2D" uid="uid://c016qtq4k0cqi" path="res://assets/Blocks/block_07.png" id="2_21jtu"]
+
+[node name="GateBlock" type="Node2D" unique_id=424187814]
+script = ExtResource("1_gev7e")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=209247187]
+self_modulate = Color(0.78039217, 0.49019608, 1, 1)
+texture = ExtResource("2_21jtu")
