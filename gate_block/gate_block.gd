@@ -2,19 +2,16 @@ class_name GateBlock
 extends Node2D
 ## Bloque de pared que baja cuando TODOS los botones de su mismo channel están presionados.
 ## Si "inverted" es true hace lo contrario: está abajo y SUBE cuando se presionan.
+## La imagen la pone el nodo hijo Sprite2D (se elige en el Inspector).
 
 @export var channel: int = 0
 @export var inverted: bool = false
 
+@onready var sprite: Sprite2D = $Sprite2D
+
 var tile: Vector2i
 var _closed := true
 var _anim: Tween
-
-# 0.0 = bloque arriba (cerrado), 1.0 = bloque abajo (abierto). Al cambiar, se redibuja.
-var openness: float = 0.0:
-	set(value):
-		openness = value
-		queue_redraw()
 
 func _ready() -> void:
 	tile = Vector2i(position / 128.0)
@@ -39,20 +36,14 @@ func _process(_delta: float) -> void:
 	var closed := is_closed()
 	if closed != _closed:
 		_closed = closed
-		if _anim:
-			_anim.kill()
-		_anim = create_tween()
-		_anim.tween_property(self, "openness", 0.0 if closed else 1.0, 0.2)
+		animate(closed)
 
-func _draw() -> void:
-	var c: Color = Level.channel_color(channel)
-	var size := lerpf(120.0, 70.0, openness)
-	var rect := Rect2(Vector2(-size, -size) / 2.0, Vector2(size, size))
-	var fill := c.darkened(0.35)
-	fill.a = lerpf(1.0, 0.25, openness)
-	draw_rect(rect, fill)
-	draw_rect(rect, c, false, 6.0)
-	if openness < 0.5:
-		# Rayas tipo ladrillo cuando está arriba
-		for y in [-20.0, 20.0]:
-			draw_line(Vector2(-size / 2.0, y), Vector2(size / 2.0, y), c.darkened(0.6), 4.0)
+func animate(closed: bool) -> void:
+	if _anim:
+		_anim.kill()
+	# set_parallel: las dos animaciones (tamaño y transparencia) ocurren a la vez
+	_anim = create_tween().set_parallel(true)
+	var target_scale: Vector2 = Vector2.ONE if closed else Vector2(0.6, 0.6)
+	var target_alpha: float = 1.0 if closed else 0.3
+	_anim.tween_property(sprite, "scale", target_scale, 0.2)
+	_anim.tween_property(sprite, "modulate:a", target_alpha, 0.2)

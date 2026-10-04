@@ -1,0 +1,11 @@
+[gd_scene format=3 uid="uid://b1nh76ci316j5"]
+
+[ext_resource type="Script" uid="uid://bv8ovex75husi" path="res://pressure_button/pressure_button.gd" id="1_v5k46"]
+[ext_resource type="Texture2D" uid="uid://ch5dcvjh1b661" path="res://assets/Environment/environment_14.png" id="2_xvclj"]
+
+[node name="PressureButton" type="Node2D" unique_id=1790436345]
+script = ExtResource("1_v5k46")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=47146106]
+self_modulate = Color(0.8509804, 0.6509804, 1, 1)
+texture = ExtResource("2_xvclj")

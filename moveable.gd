@@ -6,6 +6,7 @@ var start_tile := Vector2i.ZERO
 var tween: Tween
 var current_slide_dir := Vector2i.ZERO
 var is_teleporting: bool = false # Bandera para evitar bucles de TP
+var base_scale := Vector2.ONE  # Tamaño original, para volver a él después de las animaciones
 
 func _enter_tree() -> void:
 	Level.moveables.append(self)
@@ -17,6 +18,7 @@ func _ready() -> void:
 	tile = Vector2i(position / 128.0)
 	position = Vector2(tile) * 128.0 + Vector2(64.0, 64.0)
 	start_tile = tile
+	base_scale = scale
 	
 func can_move(direction: Vector2i, is_player: bool = false) -> bool:
 	if Level.is_blocked_for(self, tile + direction):
@@ -104,7 +106,7 @@ func teleport_to(new_tile: Vector2i) -> void:
 		if prev_hole:
 			prev_hole.notify_freed()
 	)
-	tween.tween_property(self, "scale", Vector2.ONE, 0.08)
+	tween.tween_property(self, "scale", base_scale, 0.08)
 	tween.tween_callback(on_teleport_complete)
 
 func on_teleport_complete() -> void:
